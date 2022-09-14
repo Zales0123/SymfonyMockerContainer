@@ -13,7 +13,7 @@ jobs:
     strategy:
         matrix:
           php: ["8.0"]
-          symfony: ["^5.4"]
+          symfony: ["^5.4", "^6.0"]
 
     steps:
 
@@ -25,6 +25,14 @@ jobs:
         uses: shivammathur/setup-php@v2
         with:
             php-version: "${{ matrix.php }}"
+
+    -
+        name: Restrict Symfony version
+        if: matrix.symfony != ''
+        run: |
+            composer global config --no-plugins allow-plugins.symfony/flex true
+            composer global require --no-progress --no-scripts --no-plugins "symfony/flex:1.18.5"
+            composer config extra.symfony.require "${{ matrix.symfony }}"
 
     -
         name: Validate composer.json and composer.lock
